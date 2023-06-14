@@ -60,6 +60,11 @@ public class SelectPlayerListener implements Runnable{
                         // 查询服务器列表
                         handleServerInfo(obj);
                     }
+
+                    if (msg != null && msg.equals("mp版本")) {
+                        // 查询mp信息
+                        handleMpInfo(obj);
+                    }
                     // 处理信息完成，将信息id加入set，防止重复处理
                     set.add((Integer) obj.get("message_id"));
                 }
@@ -103,6 +108,24 @@ public class SelectPlayerListener implements Runnable{
             }
         } catch (Exception e) {
             LOGGER.error("发送服务器信息失败！");
+            e.printStackTrace();
+        }
+        return success;
+    }
+
+    private boolean handleMpInfo(JSONObject obj) {
+        boolean success = false;
+        String msgType = obj.get("message_type").toString();
+        String toNumber = obj.get(msgType.equals("group") ? "group_id" : "user_id").toString();
+        try {
+            MsgSender msgSender = new MsgSender();
+            success = msgSender.sendMpInfo(msgType, toNumber);
+            if (success) {
+                LOGGER.info("发送MP信息成功! ");
+            } else {
+                LOGGER.error("发送MP信息失败");
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return success;

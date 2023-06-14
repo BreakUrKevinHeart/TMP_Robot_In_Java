@@ -92,4 +92,18 @@ public class MpInfo {
         this.supportedAtsGameVersion = supportedAtsGameVersion;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "MpInfo{" +
+                "name='" + name + '\'' +
+                ", numeric='" + numeric + '\'' +
+                ", stage='" + stage + '\'' +
+                ", ets2mpChecksum=" + ets2mpChecksum +
+                ", atsmpChecksum=" + atsmpChecksum +
+                ", time='" + time + '\'' +
+                ", supportedGameVersion='" + supportedGameVersion + '\'' +
+                ", supportedAtsGameVersion='" + supportedAtsGameVersion + '\'' +
+                '}';
+    }
 }

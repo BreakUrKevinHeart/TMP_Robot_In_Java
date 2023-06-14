@@ -1,6 +1,7 @@
 package com.xn.qq_robot.sender;
 
 import com.xn.qq_robot.caller.TruckApiCaller;
+import com.xn.qq_robot.entity.MpInfo;
 import com.xn.qq_robot.entity.Permissions;
 import com.xn.qq_robot.entity.PlayerInfo;
 import com.xn.qq_robot.entity.ServerInfo;
@@ -31,7 +32,7 @@ public class MsgSender {
         TruckApiCaller caller = new TruckApiCaller();
         List<ServerInfo> list = caller.findServerList();
         if (list == null || list.size() < 1) {
-            LOGGER.error("获取的服务器列表为空！");
+            LOGGER.error("获取服务器列表失败！");
             return false;
         }
         String msg = buildServerListInfo(list);
@@ -39,7 +40,34 @@ public class MsgSender {
         return true;
     }
 
+    public boolean sendMpInfo(String msgType, String toNumber) throws IOException {
+        TruckApiCaller caller = new TruckApiCaller();
+        MpInfo mpInfo = caller.findMpInfo();
+        String msg = buildMpInfo(mpInfo);
+        if (mpInfo == null) {
+            LOGGER.error("获取的MP信息为空！");
+            return false;
+        }
+        RobotUtils.sendMessage(msgType, toNumber, msg);
+        return true;
+    }
+
+    public String buildMpInfo(MpInfo mpInfo) {
+        if (mpInfo == null) {
+            LOGGER.error("MP信息为空！");
+            return null;
+        }
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("当前版本: " + mpInfo.getNumeric() + "\n");
+        buffer.append("上次更新时间: " + mpInfo.getTime());
+        return buffer.toString();
+    }
+
     public String buildServerListInfo(List<ServerInfo> list) {
+        if (list == null || list.size() < 1) {
+            LOGGER.error("服务器信息为空！");
+            return null;
+        }
         StringBuffer buffer = new StringBuffer();
         for (ServerInfo serverInfo : list) {
             buffer.append(serverInfo.getName() + " (" + serverInfo.getShortName() + ")\n");
@@ -73,4 +101,5 @@ public class MsgSender {
         buffer.append("管理员: " + (permissions.isGameAdmin() ? "是" : "否"));
         return buffer.toString();
     }
+
 }
